@@ -24,6 +24,34 @@ play_dev_creds = service_account.Credentials.from_service_account_file(
 )
 firestore_creds = credentials.Certificate("credentials-firestore.json")
 
+
+def on_send_review(event, context):
+    print(
+        f"This Function was triggered by messageId {context.event_id} published at {context.timestamp}"
+    )
+
+    reviews = None
+    with build("androidpublisher", "v3", credentials=play_dev_creds) as service:
+        try:
+            reviews = get_reviews(service)
+        except HttpError as e:
+            print(
+                "Error response status code : {0}, reason : {1}".format(
+                    e.resp.status, e.error_details
+                )
+            )
+    if reviews:
+        firebase_admin.initialize_app(firestore_creds)
+        db = firestore.client()
+        reviews = get_unprocessed_reviews(db, reviews)
+        batch = db.batch()
+        for review in reviews:
+            bot_send_review(review)
+            ref = db.collection("reviews").document(review[REVIEW_ID])
+            batch.set(ref, persistence_representation(review))
+        batch.commit()
+
+
 # TODO Should handle "tokenPagination"
 def get_reviews(service):
     """https://developers.google.com/android-publisher/api-ref/rest/v3/reviews/list#http-request"""
@@ -101,25 +129,3 @@ def bot_send_message(message):
             bot.sendMessage(chat_id=secrets["TELEGRAM_CHAT_ID"], text=message)
         except TelegramError as e:
             print(f"Failed to send Telegram message { e }")
-
-
-reviews = None
-with build("androidpublisher", "v3", credentials=play_dev_creds) as service:
-    try:
-        reviews = get_reviews(service)
-    except HttpError as e:
-        print(
-            "Error response status code : {0}, reason : {1}".format(
-                e.resp.status, e.error_details
-            )
-        )
-if reviews:
-    firebase_admin.initialize_app(firestore_creds)
-    db = firestore.client()
-    reviews = get_unprocessed_reviews(db, reviews)
-    batch = db.batch()
-    for review in reviews:
-        bot_send_review(review)
-        ref = db.collection("reviews").document(review[REVIEW_ID])
-        batch.set(ref, persistence_representation(review))
-    batch.commit()
