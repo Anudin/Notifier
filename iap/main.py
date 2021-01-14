@@ -20,8 +20,12 @@ def on_one_time_product_notification(event, context):
 
 def bot_send_message(message):
     import telegram
+    from telegram.error import TelegramError
 
     with open("secrets.json") as f:
         secrets = json.load(f)
-        bot = telegram.Bot(token=secrets["TELEGRAM_TOKEN"])
-        bot.sendMessage(chat_id=secrets["TELEGRAM_CHAT_ID"], text=message)
+        try:
+            bot = telegram.Bot(token=secrets["TELEGRAM_TOKEN"])
+            bot.sendMessage(chat_id=secrets["TELEGRAM_CHAT_ID"], text=message)
+        except TelegramError as e:
+            print(f"Failed to send Telegram message { e }")
