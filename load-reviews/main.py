@@ -12,9 +12,12 @@ credentials = service_account.Credentials.from_service_account_file(
 
 with build("androidpublisher", "v3", credentials=credentials) as service:
     try:
-        request = service.reviews().list(packageName="com.happy_devs.sudoku")
+        request = service.reviews().list(
+            packageName="com.happy_devs.sudoku", translationLanguage="en"
+        )
         # https://developers.google.com/android-publisher/api-ref/rest/v3/reviews/list#http-request
         response = request.execute()
+        print(json.dumps(response, indent=2))
     except HttpError as e:
         print(
             "Error response status code : {0}, reason : {1}".format(
