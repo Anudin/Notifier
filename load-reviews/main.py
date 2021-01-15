@@ -27,10 +27,10 @@ def on_send_review(event, context):
     print(
         f"This Function was triggered by messageId {context.event_id} published at {context.timestamp}"
     )
-    on_send_review()
+    _on_send_review()
 
 
-def on_send_review():
+def _on_send_review():
     reviews = None
     with build("androidpublisher", "v3", credentials=play_dev_creds) as service:
         try:
