@@ -37,9 +37,7 @@ def _on_send_review():
             reviews = get_reviews(service)
         except HttpError as e:
             print(
-                "Error response status code : {0}, reason : {1}".format(
-                    e.resp.status, e.error_details
-                )
+                f"Error response status code : {e.resp.status}, reason : {e.error_details}"
             )
     if reviews:
         firebase_admin.initialize_app(firestore_creds)
