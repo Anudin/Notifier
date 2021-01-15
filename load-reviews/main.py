@@ -126,5 +126,5 @@ def persistence_representation(review):
         REVIEW_RATING: userComment[REVIEW_RATING],
         REVIEW_TEXT: userComment[REVIEW_TEXT],
         REVIEW_LAST_MODIFIED: userComment[REVIEW_LAST_MODIFIED],
-        "added": time.time(),
+        "added": int(time.time()),
     }
