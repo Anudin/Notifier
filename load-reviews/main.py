@@ -112,8 +112,9 @@ def bot_send_review(review):
 
     if not review_notifier_send:
         config = bot.read_config("secrets.json")
+        review_notifier_bot = telegram.Bot(token=config.token)
         review_notifier_send = lambda message: bot.send_message(
-            telegram.Bot(token=config.token), config.chat_id, message
+            review_notifier_bot, config.chat_id, message
         )
     review_notifier_send(textwrap.dedent(message))
 
