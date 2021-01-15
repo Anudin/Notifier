@@ -129,7 +129,3 @@ def persistence_representation(review):
         REVIEW_LAST_MODIFIED: userComment[REVIEW_LAST_MODIFIED],
         "added": time.time(),
     }
-
-
-if __name__ == "__main__":
-    on_send_review()
