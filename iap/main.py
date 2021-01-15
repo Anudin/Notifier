@@ -7,13 +7,17 @@ def on_one_time_product_notification(event, context):
     print(
         f"This Function was triggered by messageId {context.event_id} published at {context.timestamp}"
     )
+    _on_one_time_product_notification(event)
 
+
+def _on_one_time_product_notification(event):
     if "data" in event:
         data = base64.b64decode(event["data"]).decode("utf-8")
+        data = json.loads(data)
+        print(f"The publish data was decoded as {data}")
         if "testNotification" in data:
             bot_send_message(data)
         elif "oneTimeProductNotification" in data:
-            data = json.loads(data)
             if data["oneTimeProductNotification"]["notificationType"] == 1:
                 bot_send_message(data["oneTimeProductNotification"]["sku"])
 
