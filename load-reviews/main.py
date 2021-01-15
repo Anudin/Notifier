@@ -5,15 +5,13 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import telegram
-from telegram.error import TelegramError
+from shared import bot
 import time
-import json
 import textwrap
 
 # TODO Handle review updates, requires persisting the message (and rating) too
 
 REVIEW_ID = "reviewId"
-REVIEW_NAME = "authorName"
 REVIEW_TEXT = "text"
 REVIEW_RATING = "starRating"
 REVIEW_LAST_MODIFIED = "lastModified"
@@ -29,7 +27,10 @@ def on_send_review(event, context):
     print(
         f"This Function was triggered by messageId {context.event_id} published at {context.timestamp}"
     )
+    on_send_review()
 
+
+def on_send_review():
     reviews = None
     with build("androidpublisher", "v3", credentials=play_dev_creds) as service:
         try:
@@ -92,19 +93,29 @@ def get_unprocessed_reviews(db, reviews):
     ]
 
 
+review_notifier_send = None
+
+
 def bot_send_review(review):
+    global review_notifier_send
+
     userComment = next(
         comment for comment in review["comments"] if "userComment" in comment
     )["userComment"]
-    authorName = review[REVIEW_NAME] if "authorName" in review else ""
     rating = userComment[REVIEW_RATING]
     text = userComment[REVIEW_TEXT]
     message = f"""\
-    {authorName} {rating * '★'}{(5 - rating) * '☆'}
+    {rating * '★'}{(5 - rating) * '☆'}
 
     "{text}"
     """
-    bot_send_message(textwrap.dedent(message))
+
+    if not review_notifier_send:
+        config = bot.read_config("secrets.json")
+        review_notifier_send = lambda message: bot.send_message(
+            telegram.Bot(token=config.token), config.chat_id, message
+        )
+    review_notifier_send(textwrap.dedent(message))
 
 
 def persistence_representation(review):
@@ -120,12 +131,5 @@ def persistence_representation(review):
     }
 
 
-# FIXME Refactor into reusable module
-def bot_send_message(message):
-    with open("secrets.json") as f:
-        secrets = json.load(f)
-        try:
-            bot = telegram.Bot(token=secrets["TELEGRAM_TOKEN"])
-            bot.sendMessage(chat_id=secrets["TELEGRAM_CHAT_ID"], text=message)
-        except TelegramError as e:
-            print(f"Failed to send Telegram message { e }")
+if __name__ == "__main__":
+    on_send_review()
