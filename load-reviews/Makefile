@@ -29,16 +29,17 @@ EMPTY := .empty-targets
 .PHONY: prepare
 prepare: $(EMPTY)/prepare
 
-$(EMPTY)/prepare: shared $(EMPTY)/python-deps
+$(EMPTY)/prepare: shared $(EMPTY)/pypi-deps
 > touch $@
 
+# TODO Find a better name. Used for private (non PyPI) and / or local dependencies. Adjust imports & ignore files.
 shared: $(shell find ../shared -type f)
 > cp -r $(?D) .
 > touch $@
 
 # Why "pip install wheel"?
 # See https://stackoverflow.com/questions/34819221/why-is-python-setup-py-saying-invalid-command-bdist-wheel-on-travis-ci
-$(EMPTY)/python-deps: requirements.txt | .venv $(EMPTY)
+$(EMPTY)/pypi-deps: requirements.txt | .venv $(EMPTY)
 > source .venv/bin/activate
 > pip install --no-cache-dir wheel
 > pip install --no-cache-dir -r requirements.txt
