@@ -1,8 +1,8 @@
-from collections import defaultdict
 from dataclasses import dataclass
 from typing import Optional
 
 
+# TODO chat_id should be Optional[list[str]]
 @dataclass
 class BotConfig:
     token: str
@@ -14,8 +14,7 @@ def read_config(path) -> BotConfig:
 
     with open(path) as f:
         config = json.load(f)
-        config = defaultdict(None, config)
-        return BotConfig(config["token"], config["chat_id"])
+        return BotConfig(config["token"], config.get("chatId"))
 
 
 def send_message(bot, chat_id, message):
