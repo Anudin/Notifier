@@ -81,6 +81,8 @@ def is_unprocessed(review, processed, processed_ids):
     )
 
 
+# TODO Implementation handles 10 reviews at max, see
+# https://firebase.google.com/docs/firestore/query-data/queries#in_not-in_and_array-contains-any
 def get_unprocessed_reviews(db, reviews):
     review_ids = [review[REVIEW_ID] for review in reviews]
     processed = db.collection("reviews").where("reviewId", "in", review_ids).get()
