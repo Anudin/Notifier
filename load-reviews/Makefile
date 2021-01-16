@@ -25,7 +25,7 @@ endif
 # See https://www.gnu.org/software/make/manual/html_node/Empty-Targets.html
 EMPTY := .empty-targets
 
-# Default - top level rule is what gets ran when you run just `make`
+# Default - top level rule is what gets executed when you run just `make`
 .PHONY: prepare
 prepare: $(EMPTY)/prepare
 
