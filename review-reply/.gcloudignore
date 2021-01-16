@@ -1,0 +1,4 @@
+.gcloudignore
+Makefile
+.venv/
+.empty-targets/
