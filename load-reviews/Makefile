@@ -6,10 +6,6 @@ DEPLOY_REGION =
 DEPLOY_PROJECT_ID =
 DEPLOY_ARGS = --trigger-topic example-topic --runtime python38 --memory 128 --timeout 15 --max-instances 1
 
-ifndef $(or DEPLOY_NAME, DEPLOY_REGION, DEPLOY_PROJECT_ID)
-$(error Deployment parameters must be configured)
-endif
-
 # See https://tech.davis-hansson.com/p/make/
 # === PREAMBLE START
 SHELL := bash
