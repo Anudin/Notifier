@@ -21,6 +21,6 @@ def send_message(bot, chat_id, message, **kwargs):
     from telegram.error import TelegramError
 
     try:
-        bot.sendMessage(chat_id=chat_id, text=message, **kwargs)
+        return bot.sendMessage(chat_id=chat_id, text=message, **kwargs)
     except TelegramError as e:
         print(f"Failed to send Telegram message { e }")
