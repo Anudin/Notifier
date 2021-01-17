@@ -21,7 +21,9 @@ def read_config(path) -> BotConfig:
 
 
 # TODO Check out functools.wraps
-def send_message(bot: Bot, chat_id: str, message: str, config: BotConfig = None, **kwargs):
+def send_message(
+    bot: Bot, chat_id: str, message: str, config: BotConfig = None, **kwargs
+):
     """Fire and forget Telegram message sending. Swallows errors, optionally restricts allowed chats."""
     from telegram.error import TelegramError
 
