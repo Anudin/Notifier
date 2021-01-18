@@ -66,9 +66,7 @@ def get_reviews(service):
 
 
 def is_unprocessed(review, processed, processed_ids):
-    userComment = next(
-        comment for comment in review["comments"] if "userComment" in comment
-    )["userComment"]
+    userComment = review["comments"][0]["userComment"]
     index = -1
     try:
         index = processed_ids.index(review[REVIEW_ID])
@@ -99,9 +97,7 @@ review_notifier_send = None
 def bot_send_review(review):
     global review_notifier_send
 
-    userComment = next(
-        comment for comment in review["comments"] if "userComment" in comment
-    )["userComment"]
+    userComment = review["comments"][0]["userComment"]
     rating = userComment[REVIEW_RATING]
     text = userComment[REVIEW_TEXT]
     message = f"""\
@@ -120,9 +116,7 @@ def bot_send_review(review):
 
 
 def persistence_representation(review):
-    userComment = next(
-        comment for comment in review["comments"] if "userComment" in comment
-    )["userComment"]
+    userComment = review["comments"][0]["userComment"]
     return {
         REVIEW_ID: review[REVIEW_ID],
         REVIEW_RATING: userComment[REVIEW_RATING],
