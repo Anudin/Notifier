@@ -1,0 +1,5 @@
+.gcloudignore
+Makefile
+.venv/
+.empty-targets/
+__pycache__/
