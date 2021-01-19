@@ -1,9 +1,15 @@
 import base64
 import json
 
+ONE_TIME_PRODUCT_PURCHASED = 1
 
-# https://developer.android.com/google/play/billing/rtdn-reference#one-time
+
 def on_one_time_product_notification(event, context):
+    """This endpoint handles messages published by RTDN (specifically OneTimeProductNotification for now).
+    RTDN only works with subscription changes or PENDING purchases, you will not receive messages about one time
+    purchases in most cases (see https://developer.android.com/google/play/billing/getting-ready#configure-rtdn).
+    To learn about available messages, see https://developer.android.com/google/play/billing/rtdn-reference.
+    """
     print(
         f"This Function was triggered by messageId {context.event_id} published at {context.timestamp}"
     )
@@ -14,11 +20,14 @@ def _on_one_time_product_notification(event):
     if "data" in event:
         data = base64.b64decode(event["data"]).decode("utf-8")
         data = json.loads(data)
-        print(f"The publish data was decoded as {data}")
+        print(f"Received RTDN publish {data}")
         if "testNotification" in data:
             bot_send_message(data)
         elif "oneTimeProductNotification" in data:
-            if data["oneTimeProductNotification"]["notificationType"] == 1:
+            if (
+                data["oneTimeProductNotification"]["notificationType"]
+                == ONE_TIME_PRODUCT_PURCHASED
+            ):
                 bot_send_message(data["oneTimeProductNotification"]["sku"])
 
 
