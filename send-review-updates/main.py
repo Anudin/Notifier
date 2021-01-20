@@ -51,7 +51,7 @@ def _on_send_review():
         batch.commit()
 
 
-# TODO Should handle "tokenPagination"
+# TODO Should handle "tokenPagination" / set "maxResults"
 def get_reviews(service):
     """https://developers.google.com/android-publisher/api-ref/rest/v3/reviews/list#http-request"""
     response = (
