@@ -13,6 +13,9 @@ endif
 .RECIPEPREFIX = >
 # === PREAMBLE END
 
+# This will fail if there are spaces in the path!
+DIR_PROJECT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
 # Define a folder for empty targets which can be conveniently ignored in version control / deployment
 # See https://www.gnu.org/software/make/manual/html_node/Empty-Targets.html
 DIR_EMPTY := .empty-targets
@@ -33,9 +36,9 @@ $(DIR_EMPTY)/pypi-deps: requirements.txt | $(DIR_EMPTY) .venv
 # TODO Find a better name. Used for private (non PyPI) and / or local dependencies. Adjust imports & ignore files.
 # Local dependencies need to be available in each folder meant to be deployed as a Google Cloud Function
 DIR_LOCAL_DEPS := shared
-$(DIR_LOCAL_DEPS): $(shell find ../$(DIR_LOCAL_DEPS) -type f)
-> cp -r $(?D) .
-> touch $@
+.PHONY: $(DIR_LOCAL_DEPS)
+$(DIR_LOCAL_DEPS):
+> rsync -a --delete $(DIR_PROJECT)$(DIR_LOCAL_DEPS) .
 
 # TODO Add test to prerequisites
 .PHONY: deploy
