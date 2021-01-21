@@ -1,4 +1,5 @@
 .gcloudignore
+.gitignore
 Makefile
 .venv/
 .empty-targets/
