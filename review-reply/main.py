@@ -5,10 +5,6 @@ from telegram.ext import Updater, Dispatcher, CallbackContext, CallbackQueryHand
 from shared import bot
 from functools import partial
 
-# TODO Use Updater for local development / testing
-
-# See https://github.com/python-telegram-bot/python-telegram-bot/wiki/Webhooks#custom-solution
-
 initialized = False
 decode_update = None
 dispatcher = None
@@ -17,13 +13,9 @@ review_notifier_send = None
 
 def on_review_reply(request: Request):
     """HTTP Cloud Function.
-    Args:
-        request (flask.Request): The request object.
-        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
-    Returns:
-        The response text, or any set of values that can be turned into a
-        Response object using `make_response`
-        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
+    Configure this endpoint as a webhook for your telegram bot, so it will receive updates.
+    See https://core.telegram.org/bots/webhooks#how-do-i-set-a-webhook-for-either-type
+    Based on https://github.com/python-telegram-bot/python-telegram-bot/wiki/Webhooks#custom-solution
     """
     initialize()
     request_json = request.get_json(force=True, silent=True)
