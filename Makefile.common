@@ -1,0 +1,46 @@
+# === PREAMBLE START
+# See https://tech.davis-hansson.com/p/make/
+SHELL := bash
+.ONESHELL:
+.SHELLFLAGS := -eu -o pipefail -c
+.DELETE_ON_ERROR:
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
+
+ifeq ($(origin .RECIPEPREFIX), undefined)
+	$(error This Make does not support .RECIPEPREFIX. Please use GNU Make 4.0 or later)
+endif
+.RECIPEPREFIX = >
+# === PREAMBLE END
+
+# Define a folder for empty targets which can be conveniently ignored in version control / deployment
+# See https://www.gnu.org/software/make/manual/html_node/Empty-Targets.html
+DIR_EMPTY := .empty-targets
+$(DIR_EMPTY):
+> mkdir $(DIR_EMPTY)
+
+.venv:
+> python3 -m venv .venv
+> source .venv/bin/activate
+# https://bugs.python.org/issue30628
+> pip install --upgrade pip setuptools wheel
+
+$(DIR_EMPTY)/pypi-deps: requirements.txt | $(DIR_EMPTY) .venv
+> source .venv/bin/activate
+> pip install --no-cache-dir -r requirements.txt
+> touch $@
+
+# TODO Find a better name. Used for private (non PyPI) and / or local dependencies. Adjust imports & ignore files.
+# Local dependencies need to be available in each folder meant to be deployed as a Google Cloud Function
+DIR_LOCAL_DEPS := shared
+$(DIR_LOCAL_DEPS): $(shell find ../$(DIR_LOCAL_DEPS) -type f)
+> cp -r $(?D) .
+> touch $@
+
+# TODO Add test to prerequisites
+.PHONY: deploy
+deploy: $(DIR_LOCAL_DEPS)
+> gcloud functions deploy $(DEPLOY_NAME) \
+>   --region $(DEPLOY_REGION) \
+>   --project $(DEPLOY_PROJECT_ID) \
+>   $(DEPLOY_ARGS)
