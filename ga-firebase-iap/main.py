@@ -11,7 +11,7 @@ def on_in_app_purchase(data, context):
 def _on_in_app_purchase(data):
     event = data["eventDim"][0]
     print(f"Function triggered with event data {event}")
-    bot_send_message(f"{event.valueInUSD} {event.params}")
+    bot_send_message(f"{event.valueInUsd} {event.params}")
 
 
 def bot_send_message(message):
