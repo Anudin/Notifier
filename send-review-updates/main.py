@@ -40,7 +40,12 @@ def _on_send_review():
                 f"Error response status code : {e.resp.status}, reason : {e.error_details}"
             )
     if reviews:
-        firebase_admin.initialize_app(firestore_creds)
+        try:
+            firebase_admin.initialize_app(firestore_creds)
+        # TODO Looks like a band aid fix, can the initialization state be queried? Alternatively introduce a flag?
+        except ValueError:
+            # The app is already initialized from an earlier function invocation
+            pass
         db = firestore.client()
         reviews = get_unprocessed_reviews(db, reviews)
         batch = db.batch()
