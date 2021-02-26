@@ -12,8 +12,9 @@ def _on_in_app_purchase(data):
     event = data["eventDim"][0]
     print(f"Function triggered with event data {event}")
     price = event["params"]["price"]["doubleValue"]
+    value_in_usd = event["valueInUsd"]
     currency = event["params"]["currency"]["stringValue"]
-    bot_send_message(f"Fat stacks coming in 💸\n{price} {currency}")
+    bot_send_message(f"Fat stacks coming in 💸\n{price} {currency} (or {value_in_usd}$)")
 
 
 def bot_send_message(message):
