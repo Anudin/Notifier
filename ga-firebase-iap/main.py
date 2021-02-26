@@ -11,7 +11,9 @@ def on_in_app_purchase(data, context):
 def _on_in_app_purchase(data):
     event = data["eventDim"][0]
     print(f"Function triggered with event data {event}")
-    bot_send_message(f"{event.valueInUsd} {event.params}")
+    price = event["params"]["price"]["doubleValue"]
+    currency = event["params"]["currency"]["stringValue"]
+    bot_send_message(f"Fat stacks coming in 💸\n{price} {currency}")
 
 
 def bot_send_message(message):
@@ -22,7 +24,7 @@ def bot_send_message(message):
     with open("secrets.json") as f:
         secrets = json.load(f)
         try:
-            bot = telegram.Bot(token=secrets["TELEGRAM_TOKEN"])
-            bot.sendMessage(chat_id=secrets["TELEGRAM_CHAT_ID"], text=message)
+            bot = telegram.Bot(token=secrets["token"])
+            bot.sendMessage(chat_id=secrets["chatId"], text=message)
         except TelegramError as e:
             print(f"Failed to send Telegram message { e }")
